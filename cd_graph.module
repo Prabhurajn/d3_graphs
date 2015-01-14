@@ -1,0 +1,165 @@
+<?php
+/**
+ * @file
+ * classic Driver module file.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function cd_graph_menu() {
+
+	$items['cd_graph'] = array(
+    	'title' => 'classic Driver Graphs',
+    	'description' => 'Different visualization cd_graph using d3.',
+    	'page callback' => 'cd_graph_linegraph',
+    	'access callback' => TRUE,
+  	);
+
+	if (module_exists('graphapi')) {
+    	$items['cd_graph/forcedirected'] = array(
+      		'title' => 'Force directed graph',
+      		'description' => 'Uses d3 module to create a sample force directed graph',
+      		'access callback' => TRUE,
+      		'page callback' => 'cd_graph_forcedirected',
+      		'type' => MENU_LOCAL_TASK,
+    	);
+  	}
+
+  	$items['cd_graph/line'] = array(
+    	'title' => 'Line graph',
+    	'description' => 'Uses d3 module to create a sample line graph',
+    	'access callback' => TRUE,
+    	'page callback' => 'cd_graph_linegraph',
+    	'type' => MENU_DEFAULT_LOCAL_TASK,
+  	);
+
+  	$items['cd_graph/column'] = array(
+    	'title' => 'Column chart',
+    	'description' => 'Uses d3 module to create a sample column chart',
+    	'access callback' => TRUE,
+    	'page callback' => 'cd_graph_column',
+    	'type' => MENU_LOCAL_TASK,
+  	);
+
+  	$items['cd_graph/pie'] = array(
+    	'title' => 'Pie chart',
+    	'description' => 'Uses d3 module to create a sample pie chart.',
+    	'access callback' => TRUE,
+    	'page callback' => 'cd_graph_pie',
+    	'type' => MENU_LOCAL_TASK,
+  	);
+
+  	return $items;
+}
+
+/**
+ * Demonstrates how to create a line graph using the D3 API directly.
+ */
+function cd_graph_linegraph() {
+
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'LineGraph',
+    'legend' => array(
+      'Sessions',
+      'New Users',
+    ),
+    'rows' => array(
+      array('Germany',194924,89922),
+      array('United States',112772,74290),
+      array('United Kingdom',95061,49860),
+      array('France',82951,32367),
+      array('Switzerland',43031,15739),
+      array('Belgium',34485,11267),
+      array('Italy',27181,10885),
+      array('Netherlands',26860,11484),
+      array('Austria',20823,8416),
+      array('Australia',18265,9980),
+    ),
+  );
+
+  return d3_draw($chart);
+}
+
+/**
+ * Demonstrates a force directed graph using the Graph API module.
+ */
+function cd_graph_forcedirected() {
+
+  $graph = graphapi_new_graph();
+
+  graphapi_add_link($graph, "graphapi_relation", "relation");
+  graphapi_add_link($graph, "graphapi_relation", "graphapi");
+  graphapi_add_link($graph, "graphapi", "views");
+  graphapi_add_link($graph, "php", "graphapi");
+  graphapi_add_link($graph, "graphapi", "graph_phyz");
+  graphapi_add_link($graph, "graphapi", "graphviz_filter");
+  graphapi_add_link($graph, "graphapi", "thejit");
+  graphapi_add_link($graph, "thejit", "thejit_spacetree");
+  graphapi_add_link($graph, "thejit", "thejit_forcedirected");
+  graphapi_add_link($graph, "thejit", "thejit_x");
+
+  $options = array(
+    'width' => 400,
+    'height' => 400,
+    'item-width' => 45,
+    'engine' => 'd3',
+  );
+  return theme('graphapi_dispatch', array('graph' => $graph, 'config' => $options));
+}
+
+/**
+ * Demonstrates a column chart using the D3 API directly.
+ */
+function cd_graph_column() {
+
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'ColumnChart',
+    'legend' => array(
+      'Sessions',
+            'New Users',
+    ),
+    'rows' => array(
+      array('Germany',194924,89922),
+      array('United States',112772,74290),
+      array('United Kingdom',95061,49860),
+      array('France',82951,32367),
+      array('Switzerland',43031,15739),
+      array('Belgium',34485,11267),
+      array('Italy',27181,10885),
+      array('Netherlands',26860,11484),
+      array('Austria',20823,8416),
+      array('Australia',18265,9980),
+    ),
+  );
+
+  return d3_draw($chart);
+}
+
+/**
+ * Generates a random pie chart example.
+ *
+ * @return string
+ *   HTML for the page.
+ */
+function cd_graph_pie() {
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'PieChart',
+    'rows' => array(
+      array('Germany',194924,89922),
+      array('United States',112772,74290),
+      array('United Kingdom',95061,49860),
+      array('France',82951,32367),
+      array('Switzerland',43031,15739),
+      array('Belgium',34485,11267),
+      array('Italy',27181,10885),
+      array('Netherlands',26860,11484),
+      array('Austria',20823,8416),
+      array('Australia',18265,9980),
+    ),
+  );
+  return d3_draw($chart);
+}
